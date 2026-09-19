@@ -1,0 +1,25 @@
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+section {
+    min-height: 100vh;
+    padding: 80px 20px;
+}
+
+.header {
+    padding: 20px;
+}
+
+.footer {
+    padding: 40px 20px;
+}
