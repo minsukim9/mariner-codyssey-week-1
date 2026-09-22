@@ -147,7 +147,6 @@ img {
 }
 
 
-/* 60px 이상 스크롤했을 때 적용 */
 .header.scrolled {
     background-color: var(--color-surface);
 
@@ -209,7 +208,6 @@ img {
 }
 
 
-/* 햄버거 버튼을 눌렀을 때 추가되는 상태 */
 .nav-menu.active {
     display: flex;
     flex-direction: column;
@@ -275,10 +273,6 @@ section {
         var(--space-xl)
         var(--space-sm);
 
-    /*
-        sticky header 때문에 앵커 이동 후
-        제목이 Header 뒤로 숨는 것을 방지
-    */
     scroll-margin-top: 80px;
 }
 
@@ -359,26 +353,127 @@ section h2 {
 
 
 /* =========================
-   Skills
+   About
 ========================= */
 
-.skill-list {
+.about-content {
     display: flex;
-    flex-wrap: wrap;
+    flex-direction: column;
+
+    gap: var(--space-lg);
+}
+
+
+.profile-image {
+    width: 100%;
+    max-width: 280px;
+
+    margin: 0 auto;
+
+    overflow: hidden;
+
+    border-radius: var(--border-radius-md);
+
+    box-shadow: var(--shadow-sm);
+}
+
+
+.profile-image img {
+    width: 100%;
+
+    aspect-ratio: 1 / 1;
+
+    object-fit: cover;
+}
+
+
+.about-text {
+    display: flex;
+    flex-direction: column;
 
     gap: var(--space-sm);
 }
 
 
-.skill-list li {
-    padding:
-        var(--space-xs)
-        var(--space-sm);
+.about-text p {
+    color: var(--color-text-light);
+}
+
+
+.about-text .about-label {
+    color: var(--color-primary);
+
+    font-weight: 700;
+}
+
+
+.about-text h3 {
+    font-size: var(--font-size-lg);
+
+    line-height: 1.4;
+}
+
+
+/* =========================
+   Skills
+========================= */
+
+.skill-list {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(140px, 1fr)
+        );
+
+    gap: var(--space-sm);
+}
+
+
+.skill-card {
+    min-height: 120px;
+
+    padding: var(--space-md);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    gap: var(--space-xs);
 
     background-color: var(--color-surface);
 
     border: 1px solid var(--color-border);
-    border-radius: var(--border-radius-sm);
+    border-radius: var(--border-radius-md);
+
+    box-shadow: var(--shadow-sm);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+
+.skill-card:hover {
+    transform: translateY(-4px);
+
+    box-shadow:
+        0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+
+.skill-card strong {
+    color: var(--color-text);
+
+    font-size: var(--font-size-lg);
+}
+
+
+.skill-card span {
+    color: var(--color-text-light);
+
+    font-size: var(--font-size-sm);
 }
 
 
@@ -535,6 +630,30 @@ section h2 {
 
     .hero h1 {
         font-size: 3.5rem;
+    }
+
+
+    /* About */
+
+    .about-content {
+        flex-direction: row;
+        align-items: center;
+
+        gap: var(--space-xl);
+    }
+
+
+    .profile-image {
+        width: 280px;
+
+        margin: 0;
+
+        flex-shrink: 0;
+    }
+
+
+    .about-text {
+        flex: 1;
     }
 
 
