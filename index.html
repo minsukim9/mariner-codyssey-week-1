@@ -40,7 +40,10 @@
                 MINSU
             </a>
 
-            <ul class="nav-menu">
+            <ul
+                class="nav-menu"
+                id="nav-menu"
+            >
 
                 <li>
                     <a href="#about">
@@ -84,6 +87,8 @@
                 class="menu-toggle"
                 type="button"
                 aria-label="메뉴 열기"
+                aria-controls="nav-menu"
+                aria-expanded="false"
             >
                 ☰
             </button>
@@ -133,7 +138,6 @@
         </section>
 
 
-
         <!-- =========================
              About
         ========================== -->
@@ -148,7 +152,6 @@
 
 
             <article class="about-content">
-
 
                 <div class="profile-image">
 
@@ -176,7 +179,6 @@
             </article>
 
         </section>
-
 
 
         <!-- =========================
@@ -208,7 +210,6 @@
         </section>
 
 
-
         <!-- =========================
              Projects
         ========================== -->
@@ -222,30 +223,21 @@
             </h2>
 
 
-            <!--
-                나중에 GitHub API의 상태를
-                이 영역에 표시할 예정
-
-                loading
-                success
-                error
-                empty
-            -->
             <div class="project-status">
                 프로젝트를 불러올 예정입니다.
             </div>
 
 
-            <!--
-                GitHub API로 가져온 Repository를
-                JavaScript에서 동적으로 추가할 영역
-            -->
             <div class="project-list">
+
+                <!--
+                    이후 GitHub API 데이터를
+                    JavaScript로 렌더링할 영역
+                -->
 
             </div>
 
         </section>
-
 
 
         <!-- =========================
@@ -262,7 +254,6 @@
 
 
             <form class="contact-form">
-
 
                 <!-- 이름 -->
                 <div class="form-group">
@@ -282,7 +273,6 @@
                 </div>
 
 
-
                 <!-- 이메일 -->
                 <div class="form-group">
 
@@ -299,7 +289,6 @@
                     <p class="error-message"></p>
 
                 </div>
-
 
 
                 <!-- 메시지 -->
@@ -334,7 +323,6 @@
     </main>
 
 
-
     <!-- =========================
          Scroll Top Button
     ========================== -->
@@ -345,7 +333,6 @@
     >
         ↑
     </button>
-
 
 
     <!-- =========================

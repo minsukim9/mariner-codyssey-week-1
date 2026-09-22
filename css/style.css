@@ -131,15 +131,37 @@ img {
 ========================= */
 
 .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+
     width: 100%;
 
     background-color: var(--color-background);
 
     border-bottom: 1px solid var(--color-border);
+
+    transition:
+        background-color 0.3s ease,
+        box-shadow 0.3s ease;
 }
 
 
+/* 60px 이상 스크롤했을 때 적용 */
+.header.scrolled {
+    background-color: var(--color-surface);
+
+    box-shadow: var(--shadow-sm);
+}
+
+
+/* =========================
+   Navigation
+========================= */
+
 .nav {
+    position: relative;
+
     width: 100%;
     max-width: var(--max-width);
 
@@ -148,11 +170,14 @@ img {
 
     display: flex;
     align-items: center;
-    justify-content: space-between;
+
+    gap: var(--space-xs);
 }
 
 
 .logo {
+    margin-right: auto;
+
     color: var(--color-primary);
 
     font-size: var(--font-size-lg);
@@ -160,10 +185,52 @@ img {
 }
 
 
-/* 모바일에서는 메뉴 숨김 */
+/* =========================
+   Mobile Navigation
+========================= */
 
 .nav-menu {
+    position: absolute;
+
+    top: 100%;
+    left: 0;
+
+    width: 100%;
+
     display: none;
+
+    padding: var(--space-sm);
+
+    background-color: var(--color-background);
+
+    border-bottom: 1px solid var(--color-border);
+
+    box-shadow: var(--shadow-sm);
+}
+
+
+/* 햄버거 버튼을 눌렀을 때 추가되는 상태 */
+.nav-menu.active {
+    display: flex;
+    flex-direction: column;
+
+    gap: var(--space-sm);
+}
+
+
+.nav-menu a {
+    display: block;
+
+    padding: var(--space-xs) 0;
+
+    color: var(--color-text-light);
+
+    transition: color 0.2s ease;
+}
+
+
+.nav-menu a:hover {
+    color: var(--color-primary);
 }
 
 
@@ -175,6 +242,8 @@ img {
 .menu-toggle {
     width: 40px;
     height: 40px;
+
+    flex-shrink: 0;
 
     background-color: var(--color-surface);
     color: var(--color-text);
@@ -205,6 +274,12 @@ section {
     padding:
         var(--space-xl)
         var(--space-sm);
+
+    /*
+        sticky header 때문에 앵커 이동 후
+        제목이 Header 뒤로 숨는 것을 방지
+    */
+    scroll-margin-top: 80px;
 }
 
 
@@ -417,7 +492,9 @@ section h2 {
 ========================= */
 
 .footer {
-    padding: var(--space-lg) var(--space-sm);
+    padding:
+        var(--space-lg)
+        var(--space-sm);
 
     background-color: var(--color-surface);
 
@@ -475,24 +552,30 @@ section h2 {
 @media (min-width: 1024px) {
 
     .nav-menu {
+        position: static;
+
+        width: auto;
+
         display: flex;
+        flex-direction: row;
 
         margin-left: auto;
         margin-right: var(--space-md);
 
+        padding: 0;
+
         gap: var(--space-lg);
+
+        background-color: transparent;
+
+        border: none;
+
+        box-shadow: none;
     }
 
 
     .nav-menu a {
-        color: var(--color-text-light);
-
-        transition: color 0.2s ease;
-    }
-
-
-    .nav-menu a:hover {
-        color: var(--color-primary);
+        padding: 0;
     }
 
 
