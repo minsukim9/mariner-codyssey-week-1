@@ -16,7 +16,6 @@ GitHub Pages를 통해 포트폴리오를 배포합니다.
 개인 소개와 기술 스택, GitHub 프로젝트, 연락처 정보를
 하나의 페이지에서 확인할 수 있는 포트폴리오 웹사이트입니다.
 
-단순한 정적 페이지를 구성하는 데 그치지 않고
 사용자의 이벤트에 따라 상태를 변경하고,
 변경된 상태를 기반으로 화면을 렌더링하도록 구현했습니다.
 
@@ -46,6 +45,7 @@ DOM 업데이트
   - `aria-invalid`
   - `aria-describedby`
   - `aria-live`
+  - `aria-pressed`
 
 ### CSS
 
@@ -68,6 +68,7 @@ DOM 업데이트
 - Local Storage
 - Intersection Observer
 - MatchMedia
+- Array Methods
 
 ### API & Deployment
 
@@ -152,7 +153,8 @@ JavaScript에서 스타일을 직접 변경하는 대신
 3. 기본 Light Theme
 ```
 
-따라서 페이지를 새로고침해도 사용자가 선택한 테마가 유지됩니다.
+따라서 페이지를 새로고침해도
+사용자가 선택한 테마가 유지됩니다.
 
 ---
 
@@ -236,7 +238,58 @@ grid-template-columns:
 ```
 
 카드 내부에서는 Flexbox를 사용해
-프로젝트 설명의 길이가 달라도 하단 정보가 일정한 위치에 오도록 구성했습니다.
+프로젝트 설명의 길이가 달라도
+하단 정보가 일정한 위치에 오도록 구성했습니다.
+
+---
+
+### 8. Projects Language Filter
+
+GitHub Repository에서 가져온 언어 정보를 기반으로
+프로젝트 필터 버튼을 동적으로 생성합니다.
+
+예:
+
+```text
+All
+Java
+JavaScript
+Python
+Other
+```
+
+기본 상태는:
+
+```text
+All
+```
+
+입니다.
+
+사용자가 특정 언어를 선택하면
+전체 Repository 배열에서 해당 언어의 프로젝트만 표시합니다.
+
+```javascript
+const filteredProjects =
+    projects.filter(
+        ({ language }) =>
+            language === selectedLanguage
+    );
+```
+
+현재 선택한 필터는 `projectState`에서 관리합니다.
+
+```javascript
+let projectState = {
+    status: 'idle',
+    projects: [],
+    selectedLanguage: 'all',
+    errorMessage: ''
+};
+```
+
+필터를 변경해도 GitHub API나 `repos.json`을 다시 요청하지 않고,
+이미 불러온 Repository 데이터를 대상으로 화면만 다시 렌더링합니다.
 
 ---
 
@@ -251,9 +304,11 @@ Browser
 → Repository 데이터
 ```
 
-이 방식은 인증되지 않은 API 요청의 Rate Limit 영향을 받을 수 있었습니다.
+이 방식은 인증되지 않은 API 요청의
+Rate Limit 영향을 받을 수 있었습니다.
 
-현재는 GitHub Actions가 Repository 데이터를 미리 생성하도록 변경했습니다.
+현재는 GitHub Actions가
+Repository 데이터를 미리 생성하도록 변경했습니다.
 
 ```text
 GitHub Actions
@@ -280,7 +335,8 @@ Projects 렌더링
 ## GitHub Actions
 
 GitHub Actions Workflow에서
-Personal Access Token을 이용해 인증된 GitHub REST API 요청을 수행합니다.
+Personal Access Token을 이용해
+인증된 GitHub REST API 요청을 수행합니다.
 
 인증 정보는 Repository Secret으로 관리합니다.
 
@@ -337,6 +393,14 @@ error
 empty
 ```
 
+추가로 현재 선택된 언어를:
+
+```text
+selectedLanguage
+```
+
+상태로 관리합니다.
+
 동작 흐름:
 
 ```text
@@ -346,19 +410,23 @@ repos.json 요청
     ↓
 renderProjects()
     ↓
-DOM 업데이트
+언어 필터 생성
+    ↓
+filter()
+    ↓
+Project Card 렌더링
 ```
 
 | 상태 | 화면 |
 | --- | --- |
 | loading | Loading Spinner |
-| success | Repository Card |
+| success | Language Filter + Repository Card |
 | error | Error Message + Retry |
 | empty | Empty Message |
 
 ---
 
-### 8. Scroll Top
+### 9. Scroll Top
 
 페이지를 일정 거리 이상 스크롤하면
 오른쪽 아래에 Scroll Top 버튼이 표시됩니다.
@@ -378,7 +446,7 @@ window.scrollTo({
 
 ---
 
-### 9. Scroll Reveal Animation
+### 10. Scroll Reveal Animation
 
 각 Section이 화면에 들어올 때
 Intersection Observer를 이용해 애니메이션을 실행합니다.
@@ -404,7 +472,7 @@ Section 진입
 
 ---
 
-### 10. Reduced Motion
+### 11. Reduced Motion
 
 운영체제에서 애니메이션 감소 설정을 사용하는 사용자를 위해
 `prefers-reduced-motion`을 지원합니다.
@@ -417,7 +485,7 @@ Section 진입
 
 ---
 
-### 11. Contact Form Validation
+### 12. Contact Form Validation
 
 Contact 폼에는 다음 필드가 있습니다.
 
@@ -458,7 +526,7 @@ event.preventDefault();
 
 | 이벤트 | 사용 위치 |
 | --- | --- |
-| `click` | 햄버거 메뉴, 다크 모드, Scroll Top, Retry |
+| `click` | 햄버거 메뉴, 다크 모드, Project Filter, Scroll Top, Retry |
 | `scroll` | Header, Scroll Top |
 | `input` | Contact 실시간 유효성 검사 |
 | `submit` | Contact 제출 |
@@ -482,8 +550,11 @@ const applyTheme = (theme) => {
 ### Template Literal
 
 ```javascript
-const PROJECT_DATA_URL =
-    './data/repos.json';
+return `
+    <article class="project-card">
+        ...
+    </article>
+`;
 ```
 
 ### Destructuring
@@ -507,14 +578,48 @@ projectState = {
 };
 ```
 
-### Array Methods
+### map()
+
+Repository 데이터를 Project Card HTML로 변환할 때 사용합니다.
+
+```javascript
+projects.map((project) => {
+    ...
+});
+```
+
+### filter()
+
+사용자가 선택한 언어와 일치하는
+Repository만 추출할 때 사용합니다.
+
+```javascript
+projects.filter(
+    ({ language }) =>
+        language === selectedLanguage
+);
+```
+
+### forEach()
+
+Navigation과 DOM Element에
+이벤트를 등록할 때 사용합니다.
+
+```javascript
+navLinks.forEach((link) => {
+    ...
+});
+```
+
+추가로:
 
 ```text
-map()
-forEach()
 some()
 find()
 ```
+
+등의 배열 메서드도
+Contact Form 유효성 검사에 사용합니다.
 
 ---
 
@@ -556,6 +661,7 @@ Navigation
 Hero Actions
 About
 Skill Tags
+Project Filters
 Project Card 내부
 Contact Form
 ```
@@ -622,7 +728,8 @@ git clone https://github.com/minsukim9/mariner-codyssey-week-1.git
 cd mariner-codyssey-week-1
 ```
 
-HTML/CSS/JavaScript는 Live Server 등을 이용해 실행할 수 있습니다.
+HTML/CSS/JavaScript는
+Live Server 등을 이용해 실행할 수 있습니다.
 
 단, `repos.json`은 GitHub Actions에서 생성되기 때문에
 로컬 환경에서는 Projects 데이터 요청이 실패할 수 있습니다.
@@ -691,6 +798,7 @@ https://minsukim9.github.io/mariner-codyssey-week-1/data/repos.json
 | Desktop Breakpoint | 1024px |
 | Skill Group 최소 너비 | 260px |
 | Project 최소 카드 너비 | 260px |
+| Project Filter | Repository Language |
 | Repository 자동 갱신 | 6시간 |
 
 ---

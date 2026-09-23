@@ -2,10 +2,15 @@
    Dark Mode
 ========================= */
 
-const THEME_STORAGE_KEY = 'theme';
+const THEME_STORAGE_KEY =
+    'theme';
+
 
 const themeToggle =
-    document.querySelector('.theme-toggle');
+    document.querySelector(
+        '.theme-toggle'
+    );
+
 
 const systemTheme =
     window.matchMedia(
@@ -13,7 +18,9 @@ const systemTheme =
     );
 
 
-const applyTheme = (theme) => {
+const applyTheme = (
+    theme
+) => {
 
     document.documentElement.dataset.theme =
         theme;
@@ -57,7 +64,9 @@ const getInitialTheme = () => {
     }
 
 
-    if (systemTheme.matches) {
+    if (
+        systemTheme.matches
+    ) {
 
         return 'dark';
 
@@ -79,7 +88,9 @@ themeToggle.addEventListener(
     () => {
 
         const currentTheme =
-            document.documentElement.dataset.theme;
+            document.documentElement
+                .dataset
+                .theme;
 
 
         const nextTheme =
@@ -94,7 +105,9 @@ themeToggle.addEventListener(
         );
 
 
-        applyTheme(nextTheme);
+        applyTheme(
+            nextTheme
+        );
 
     }
 );
@@ -110,7 +123,9 @@ systemTheme.addEventListener(
             );
 
 
-        if (savedTheme) {
+        if (
+            savedTheme
+        ) {
 
             return;
 
@@ -123,7 +138,9 @@ systemTheme.addEventListener(
                 : 'light';
 
 
-        applyTheme(nextTheme);
+        applyTheme(
+            nextTheme
+        );
 
     }
 );
@@ -138,10 +155,12 @@ const menuToggle =
         '.menu-toggle'
     );
 
+
 const navMenu =
     document.querySelector(
         '.nav-menu'
     );
+
 
 const navLinks =
     document.querySelectorAll(
@@ -207,7 +226,9 @@ navLinks.forEach(
                     );
 
 
-                if (!targetSection) {
+                if (
+                    !targetSection
+                ) {
 
                     return;
 
@@ -250,6 +271,7 @@ const header =
     document.querySelector(
         '.header'
     );
+
 
 const scrollTopButton =
     document.querySelector(
@@ -304,6 +326,7 @@ const revealElements =
         'main section'
     );
 
+
 const prefersReducedMotion =
     window.matchMedia(
         '(prefers-reduced-motion: reduce)'
@@ -312,7 +335,10 @@ const prefersReducedMotion =
 
 if (
     prefersReducedMotion ||
-    !('IntersectionObserver' in window)
+    !(
+        'IntersectionObserver'
+        in window
+    )
 ) {
 
     revealElements.forEach(
@@ -340,7 +366,10 @@ if (
 
     const revealObserver =
         new IntersectionObserver(
-            (entries, observer) => {
+            (
+                entries,
+                observer
+            ) => {
 
                 entries.forEach(
                     (entry) => {
@@ -354,9 +383,11 @@ if (
                         }
 
 
-                        entry.target.classList.add(
-                            'revealed'
-                        );
+                        entry.target
+                            .classList
+                            .add(
+                                'revealed'
+                            );
 
 
                         observer.unobserve(
@@ -399,9 +430,16 @@ const projectStatus =
         '.project-status'
     );
 
+
 const projectList =
     document.querySelector(
         '.project-list'
+    );
+
+
+const projectFilters =
+    document.querySelector(
+        '.project-filters'
     );
 
 
@@ -410,6 +448,8 @@ let projectState = {
     status: 'idle',
 
     projects: [],
+
+    selectedLanguage: 'all',
 
     errorMessage: ''
 
@@ -442,7 +482,9 @@ const updateProjectState = (
    HTML Escape
 ========================= */
 
-const escapeHtml = (value) => {
+const escapeHtml = (
+    value
+) => {
 
     const htmlEntities = {
 
@@ -462,10 +504,167 @@ const escapeHtml = (value) => {
     return String(value).replace(
         /[&<>"']/g,
         (character) =>
-            htmlEntities[character]
+            htmlEntities[
+                character
+            ]
     );
 
 };
+
+
+/* =========================
+   Project Languages
+========================= */
+
+const getProjectLanguages = (
+    projects
+) => {
+
+    const languages =
+        projects.map(
+            ({
+                language
+            }) =>
+                language ||
+                'Other'
+        );
+
+
+    return [
+        ...new Set(
+            languages
+        )
+    ].sort(
+        (
+            firstLanguage,
+            secondLanguage
+        ) =>
+            firstLanguage.localeCompare(
+                secondLanguage
+            )
+    );
+
+};
+
+
+/* =========================
+   Project Filters
+========================= */
+
+const renderProjectFilters = (
+    projects,
+    selectedLanguage
+) => {
+
+    const languages =
+        getProjectLanguages(
+            projects
+        );
+
+
+    const filters = [
+        'all',
+        ...languages
+    ];
+
+
+    projectFilters.innerHTML =
+        filters
+            .map(
+                (language) => {
+
+                    const isAll =
+                        language === 'all';
+
+
+                    const label =
+                        isAll
+                            ? 'All'
+                            : language;
+
+
+                    const isActive =
+                        selectedLanguage
+                        === language;
+
+
+                    return `
+                        <button
+                            class="
+                                project-filter
+                                ${
+                                    isActive
+                                        ? 'active'
+                                        : ''
+                                }
+                            "
+                            type="button"
+                            data-language="${
+                                escapeHtml(
+                                    language
+                                )
+                            }"
+                            aria-pressed="${
+                                String(
+                                    isActive
+                                )
+                            }"
+                        >
+                            ${
+                                escapeHtml(
+                                    label
+                                )
+                            }
+                        </button>
+                    `;
+
+                }
+            )
+            .join('');
+
+
+    projectFilters.hidden =
+        false;
+
+};
+
+
+/* =========================
+   Project Filter Event
+========================= */
+
+projectFilters.addEventListener(
+    'click',
+    (event) => {
+
+        const filterButton =
+            event.target.closest(
+                '.project-filter'
+            );
+
+
+        if (
+            !filterButton
+        ) {
+
+            return;
+
+        }
+
+
+        const selectedLanguage =
+            filterButton.dataset
+                .language;
+
+
+        updateProjectState({
+
+            selectedLanguage
+
+        });
+
+    }
+);
 
 
 /* =========================
@@ -516,27 +715,45 @@ const createProjectCards = (
 
 
                 return `
-                    <article class="project-card">
+                    <article
+                        class="project-card"
+                    >
 
-                        <div class="project-card-header">
+                        <div
+                            class="
+                                project-card-header
+                            "
+                        >
 
                             <h3>
                                 ${safeName}
                             </h3>
 
-                            <span class="project-language">
+                            <span
+                                class="
+                                    project-language
+                                "
+                            >
                                 ${safeLanguage}
                             </span>
 
                         </div>
 
 
-                        <p class="project-description">
+                        <p
+                            class="
+                                project-description
+                            "
+                        >
                             ${safeDescription}
                         </p>
 
 
-                        <div class="project-meta">
+                        <div
+                            class="
+                                project-meta
+                            "
+                        >
 
                             <span>
                                 ⭐ ${stargazers_count}
@@ -545,7 +762,10 @@ const createProjectCards = (
                             <a
                                 href="${safeUrl}"
                                 target="_blank"
-                                rel="noopener noreferrer"
+                                rel="
+                                    noopener
+                                    noreferrer
+                                "
                             >
                                 View Repository
                             </a>
@@ -571,13 +791,21 @@ const renderProjects = () => {
     const {
         status,
         projects,
+        selectedLanguage,
         errorMessage
     } = projectState;
 
 
-    projectList.innerHTML = '';
+    projectList.innerHTML =
+        '';
 
-    projectStatus.hidden = false;
+
+    projectStatus.hidden =
+        false;
+
+
+    projectFilters.hidden =
+        true;
 
 
     /* Loading */
@@ -611,9 +839,11 @@ const renderProjects = () => {
 
         projectStatus.innerHTML = `
             <p>
-                ${escapeHtml(
-                    errorMessage
-                )}
+                ${
+                    escapeHtml(
+                        errorMessage
+                    )
+                }
             </p>
 
             <button
@@ -663,14 +893,45 @@ const renderProjects = () => {
         status === 'success'
     ) {
 
-        projectStatus.hidden = true;
+        renderProjectFilters(
+            projects,
+            selectedLanguage
+        );
 
-        projectStatus.innerHTML = '';
+
+        const filteredProjects =
+            selectedLanguage === 'all'
+                ? projects
+                : projects.filter(
+                    ({
+                        language
+                    }) => {
+
+                        const projectLanguage =
+                            language ||
+                            'Other';
+
+
+                        return (
+                            projectLanguage
+                            === selectedLanguage
+                        );
+
+                    }
+                );
+
+
+        projectStatus.hidden =
+            true;
+
+
+        projectStatus.innerHTML =
+            '';
 
 
         projectList.innerHTML =
             createProjectCards(
-                projects
+                filteredProjects
             );
 
 
@@ -679,7 +940,8 @@ const renderProjects = () => {
     }
 
 
-    projectStatus.hidden = true;
+    projectStatus.hidden =
+        true;
 
 };
 
@@ -695,6 +957,8 @@ async function fetchProjects() {
         status: 'loading',
 
         projects: [],
+
+        selectedLanguage: 'all',
 
         errorMessage: ''
 
@@ -750,6 +1014,9 @@ async function fetchProjects() {
 
                 projects: [],
 
+                selectedLanguage:
+                    'all',
+
                 errorMessage: ''
 
             });
@@ -766,12 +1033,17 @@ async function fetchProjects() {
 
             projects,
 
+            selectedLanguage:
+                'all',
+
             errorMessage: ''
 
         });
 
 
-    } catch (error) {
+    } catch (
+        error
+    ) {
 
         console.error(
             'Project Data Error:',
@@ -784,6 +1056,9 @@ async function fetchProjects() {
             status: 'error',
 
             projects: [],
+
+            selectedLanguage:
+                'all',
 
             errorMessage:
                 error.message ||
@@ -970,10 +1245,12 @@ const renderContactField = (
             fieldName
         ];
 
+
     const errorElement =
         formErrorElements[
             fieldName
         ];
+
 
     const errorMessage =
         formState.errors[
@@ -1103,23 +1380,23 @@ contactForm.addEventListener(
                 Object.entries(
                     formState.values
                 )
-                .map(
-                    (
-                        [
+                    .map(
+                        (
+                            [
+                                fieldName,
+                                value
+                            ]
+                        ) => [
+
                             fieldName,
-                            value
+
+                            validateContactField(
+                                fieldName,
+                                value
+                            )
+
                         ]
-                    ) => [
-
-                        fieldName,
-
-                        validateContactField(
-                            fieldName,
-                            value
-                        )
-
-                    ]
-                )
+                    )
 
             );
 
@@ -1128,12 +1405,14 @@ contactForm.addEventListener(
             Object.values(
                 errors
             )
-            .some(
-                (errorMessage) =>
-                    Boolean(
+                .some(
+                    (
                         errorMessage
-                    )
-            );
+                    ) =>
+                        Boolean(
+                            errorMessage
+                        )
+                );
 
 
         formState = {
@@ -1158,14 +1437,16 @@ contactForm.addEventListener(
                 Object.keys(
                     errors
                 )
-                .find(
-                    (fieldName) =>
-                        Boolean(
-                            errors[
-                                fieldName
-                            ]
-                        )
-                );
+                    .find(
+                        (
+                            fieldName
+                        ) =>
+                            Boolean(
+                                errors[
+                                    fieldName
+                                ]
+                            )
+                    );
 
 
             formFields[
