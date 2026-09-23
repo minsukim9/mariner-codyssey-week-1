@@ -440,29 +440,27 @@ section h2 {
    Skills
 ========================= */
 
-.skill-list {
+.skill-groups {
     display: grid;
 
     grid-template-columns:
         repeat(
             auto-fit,
-            minmax(140px, 1fr)
+            minmax(260px, 1fr)
         );
 
-    gap: var(--space-sm);
+    gap: var(--space-md);
 }
 
 
-.skill-card {
-    min-height: 120px;
+/* =========================
+   Skill Group
+========================= */
 
-    padding: var(--space-md);
+.skill-group {
+    min-height: 180px;
 
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-
-    gap: var(--space-xs);
+    padding: var(--space-lg);
 
     background-color: var(--color-surface);
 
@@ -477,25 +475,62 @@ section h2 {
 }
 
 
-.skill-card:hover {
+.skill-group:hover {
     transform: translateY(-4px);
 
     box-shadow:
-        0 6px 16px rgba(0, 0, 0, 0.1);
+        0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
 
-.skill-card strong {
+.skill-group h3 {
+    margin-bottom: var(--space-md);
+
     color: var(--color-text);
 
     font-size: var(--font-size-lg);
 }
 
 
-.skill-card span {
+/* =========================
+   Skill Tags
+========================= */
+
+.skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+
+    gap: var(--space-xs);
+}
+
+
+.skill-tags li {
+    padding:
+        0.5rem
+        0.875rem;
+
+    background-color: var(--color-background);
     color: var(--color-text-light);
 
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+
     font-size: var(--font-size-sm);
+    font-weight: 600;
+
+    transition:
+        color 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.skill-tags li:hover {
+    color: var(--color-primary);
+
+    border-color: var(--color-primary);
+
+    transform: translateY(-2px);
 }
 
 
@@ -778,8 +813,6 @@ section h2 {
 }
 
 
-/* 유효하지 않은 필드 */
-
 .form-group input[aria-invalid="true"],
 .form-group textarea[aria-invalid="true"] {
     border-color: var(--color-error);
@@ -946,7 +979,8 @@ section h2 {
 
     .scroll-top,
     .hero-actions a,
-    .skill-card,
+    .skill-group,
+    .skill-tags li,
     .project-card,
     .retry-projects,
     .contact-form button {
