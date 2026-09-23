@@ -2,12 +2,15 @@
    Dark Mode
 ========================= */
 
-const themeToggle = document.querySelector('.theme-toggle');
+const themeToggle =
+    document.querySelector('.theme-toggle');
+
 
 themeToggle.addEventListener('click', () => {
 
     const currentTheme =
         document.documentElement.dataset.theme;
+
 
     if (currentTheme === 'dark') {
 
@@ -38,32 +41,19 @@ const navLinks =
 
 menuToggle.addEventListener('click', () => {
 
-    /*
-        active 클래스가 없으면 추가하고,
-        있으면 제거한다.
-    */
     navMenu.classList.toggle('active');
 
 
-    /*
-        현재 메뉴가 열려있는지 확인
-    */
     const isOpen =
         navMenu.classList.contains('active');
 
 
-    /*
-        접근성을 위한 상태 변경
-    */
     menuToggle.setAttribute(
         'aria-expanded',
         String(isOpen)
     );
 
 
-    /*
-        버튼의 설명도 현재 상태에 맞게 변경
-    */
     menuToggle.setAttribute(
         'aria-label',
         isOpen ? '메뉴 닫기' : '메뉴 열기'
@@ -80,49 +70,30 @@ navLinks.forEach((link) => {
 
     link.addEventListener('click', (event) => {
 
-        /*
-            <a href="#about">의
-            기본 이동 동작을 막는다.
-        */
         event.preventDefault();
 
 
-        /*
-            클릭한 링크의 href 값을 가져온다.
-
-            About의 경우:
-            "#about"
-        */
         const targetId =
             link.getAttribute('href');
 
 
-        /*
-            href와 같은 id를 가진
-            section을 찾는다.
-        */
         const targetSection =
             document.querySelector(targetId);
 
 
-        /*
-            해당 section으로
-            부드럽게 이동한다.
-        */
+        if (!targetSection) {
+            return;
+        }
+
+
         targetSection.scrollIntoView({
             behavior: 'smooth'
         });
 
 
-        /*
-            모바일 메뉴가 열려 있다면 닫는다.
-        */
         navMenu.classList.remove('active');
 
 
-        /*
-            접근성 상태도 닫힌 상태로 변경한다.
-        */
         menuToggle.setAttribute(
             'aria-expanded',
             'false'
@@ -149,10 +120,6 @@ const header =
 
 window.addEventListener('scroll', () => {
 
-    /*
-        현재 페이지가 위에서부터
-        얼마나 스크롤됐는지를 확인한다.
-    */
     if (window.scrollY >= 60) {
 
         header.classList.add('scrolled');
@@ -164,3 +131,368 @@ window.addEventListener('scroll', () => {
     }
 
 });
+
+
+/* =========================
+   GitHub Projects
+========================= */
+
+const GITHUB_USERNAME = 'minsukim9';
+
+const GITHUB_API_URL =
+    `https://api.github.com/users/${GITHUB_USERNAME}/repos`;
+
+
+const projectStatus =
+    document.querySelector('.project-status');
+
+const projectList =
+    document.querySelector('.project-list');
+
+
+/*
+    Projects 영역에서 관리할 상태
+
+    idle
+    loading
+    success
+    error
+    empty
+*/
+let projectState = {
+    status: 'idle',
+    projects: [],
+    errorMessage: ''
+};
+
+
+/* =========================
+   Project State
+========================= */
+
+const updateProjectState = (nextState) => {
+
+    projectState = {
+        ...projectState,
+        ...nextState
+    };
+
+
+    renderProjects();
+
+};
+
+
+/* =========================
+   HTML Escape
+========================= */
+
+/*
+    GitHub에서 받은 문자열을 innerHTML에
+    안전하게 출력하기 위한 함수
+*/
+const escapeHtml = (value) => {
+
+    const htmlEntities = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    };
+
+
+    return String(value).replace(
+        /[&<>"']/g,
+        (character) => htmlEntities[character]
+    );
+
+};
+
+
+/* =========================
+   Project Card Render
+========================= */
+
+const createProjectCards = (projects) => {
+
+    return projects.map((project) => {
+
+        const {
+            name,
+            description,
+            language,
+            stargazers_count,
+            html_url
+        } = project;
+
+
+        const safeName =
+            escapeHtml(name);
+
+        const safeDescription =
+            escapeHtml(
+                description || '등록된 프로젝트 설명이 없습니다.'
+            );
+
+        const safeLanguage =
+            escapeHtml(
+                language || 'Other'
+            );
+
+        const safeUrl =
+            escapeHtml(html_url);
+
+
+        return `
+            <article class="project-card">
+
+                <div class="project-card-header">
+
+                    <h3>
+                        ${safeName}
+                    </h3>
+
+                    <span class="project-language">
+                        ${safeLanguage}
+                    </span>
+
+                </div>
+
+
+                <p class="project-description">
+                    ${safeDescription}
+                </p>
+
+
+                <div class="project-meta">
+
+                    <span>
+                        ⭐ ${stargazers_count}
+                    </span>
+
+                    <a
+                        href="${safeUrl}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        View Repository
+                    </a>
+
+                </div>
+
+            </article>
+        `;
+
+    }).join('');
+
+};
+
+
+/* =========================
+   Projects Render
+========================= */
+
+const renderProjects = () => {
+
+    const {
+        status,
+        projects,
+        errorMessage
+    } = projectState;
+
+
+    /*
+        렌더링할 때 이전 화면을 정리한다.
+    */
+    projectList.innerHTML = '';
+
+    projectStatus.hidden = false;
+
+
+    /*
+        Loading
+    */
+    if (status === 'loading') {
+
+        projectStatus.innerHTML = `
+            <div
+                class="loading-spinner"
+                aria-hidden="true"
+            ></div>
+
+            <p>
+                프로젝트를 불러오는 중입니다...
+            </p>
+        `;
+
+        return;
+    }
+
+
+    /*
+        Error
+    */
+    if (status === 'error') {
+
+        projectStatus.innerHTML = `
+            <p>
+                ${escapeHtml(errorMessage)}
+            </p>
+
+            <button
+                class="retry-projects"
+                type="button"
+            >
+                다시 시도
+            </button>
+        `;
+
+
+        const retryButton =
+            document.querySelector('.retry-projects');
+
+
+        retryButton.addEventListener(
+            'click',
+            fetchProjects
+        );
+
+
+        return;
+    }
+
+
+    /*
+        Empty
+    */
+    if (status === 'empty') {
+
+        projectStatus.textContent =
+            '표시할 프로젝트가 없습니다.';
+
+        return;
+    }
+
+
+    /*
+        Success
+    */
+    if (status === 'success') {
+
+        projectStatus.hidden = true;
+
+        projectStatus.innerHTML = '';
+
+
+        projectList.innerHTML =
+            createProjectCards(projects);
+
+        return;
+    }
+
+
+    /*
+        Idle
+    */
+    projectStatus.hidden = true;
+
+};
+
+
+/* =========================
+   GitHub API
+========================= */
+
+async function fetchProjects() {
+
+    updateProjectState({
+        status: 'loading',
+        projects: [],
+        errorMessage: ''
+    });
+
+
+    try {
+
+        const response =
+            await fetch(GITHUB_API_URL);
+
+
+        /*
+            HTTP 응답이 2xx가 아닌 경우
+            직접 Error를 발생시킨다.
+        */
+        if (!response.ok) {
+
+            if (response.status === 403) {
+
+                throw new Error(
+                    'GitHub API 요청 한도를 초과했습니다. 잠시 후 다시 시도해주세요.'
+                );
+
+            }
+
+
+            throw new Error(
+                '프로젝트를 불러올 수 없습니다.'
+            );
+
+        }
+
+
+        const projects =
+            await response.json();
+
+
+        /*
+            Repository가 하나도 없는 경우
+        */
+        if (projects.length === 0) {
+
+            updateProjectState({
+                status: 'empty',
+                projects: [],
+                errorMessage: ''
+            });
+
+            return;
+        }
+
+
+        /*
+            정상적으로 데이터를 가져온 경우
+        */
+        updateProjectState({
+            status: 'success',
+            projects,
+            errorMessage: ''
+        });
+
+
+    } catch (error) {
+
+        console.error(
+            'GitHub API Error:',
+            error
+        );
+
+
+        updateProjectState({
+            status: 'error',
+            projects: [],
+            errorMessage:
+                error.message ||
+                '프로젝트를 불러올 수 없습니다.'
+        });
+
+    }
+
+}
+
+
+/* =========================
+   Initial Load
+========================= */
+
+fetchProjects();
