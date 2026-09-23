@@ -285,6 +285,28 @@ section h2 {
 
 
 /* =========================
+   Scroll Reveal Animation
+========================= */
+
+.reveal {
+    opacity: 0;
+
+    transform: translateY(32px);
+
+    transition:
+        opacity 0.6s ease,
+        transform 0.6s ease;
+}
+
+
+.reveal.revealed {
+    opacity: 1;
+
+    transform: translateY(0);
+}
+
+
+/* =========================
    Hero
 ========================= */
 
@@ -780,15 +802,51 @@ section h2 {
     right: var(--space-md);
     bottom: var(--space-md);
 
+    z-index: 90;
+
     width: 48px;
     height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
     background-color: var(--color-primary);
     color: #ffffff;
 
     border-radius: 50%;
 
-    display: none;
+    box-shadow: var(--shadow-sm);
+
+    opacity: 0;
+    visibility: hidden;
+
+    pointer-events: none;
+
+    transform: translateY(12px);
+
+    transition:
+        background-color 0.2s ease,
+        opacity 0.2s ease,
+        visibility 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+.scroll-top.visible {
+    opacity: 1;
+    visibility: visible;
+
+    pointer-events: auto;
+
+    transform: translateY(0);
+}
+
+
+.scroll-top:hover {
+    background-color: var(--color-primary-hover);
+
+    transform: translateY(-2px);
 }
 
 
@@ -814,6 +872,42 @@ section h2 {
 
 .footer a {
     color: var(--color-primary);
+}
+
+
+/* =========================
+   Reduced Motion
+========================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    html {
+        scroll-behavior: auto;
+    }
+
+
+    .reveal {
+        opacity: 1;
+
+        transform: none;
+
+        transition: none;
+    }
+
+
+    .loading-spinner {
+        animation: none;
+    }
+
+
+    .scroll-top,
+    .hero-actions a,
+    .skill-card,
+    .project-card,
+    .retry-projects {
+        transition: none;
+    }
+
 }
 
 
@@ -868,6 +962,7 @@ section h2 {
     .contact-form {
         max-width: 600px;
     }
+
 }
 
 
@@ -914,4 +1009,5 @@ section h2 {
     .hero h1 {
         font-size: 4rem;
     }
+
 }
