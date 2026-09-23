@@ -268,17 +268,155 @@
             </h2>
 
 
-            <div class="project-status">
-                프로젝트를 불러올 예정입니다.
+            <p class="projects-description">
+                GitHub에서 진행한 프로젝트를 소개합니다.
+            </p>
+
+
+            <!--
+                다음 단계에서 GitHub API 상태를
+                표시할 영역
+
+                loading
+                error
+                empty
+            -->
+            <div
+                class="project-status"
+                hidden
+            >
             </div>
 
 
+            <!--
+                현재 단계에서는 카드 UI 확인을 위해
+                임시 데이터를 사용한다.
+
+                다음 단계에서 GitHub API 데이터로 교체한다.
+            -->
             <div class="project-list">
 
-                <!--
-                    이후 GitHub API 데이터를
-                    JavaScript로 렌더링할 영역
-                -->
+
+                <article class="project-card">
+
+                    <div class="project-card-header">
+
+                        <h3>
+                            Project 1
+                        </h3>
+
+                        <span class="project-language">
+                            Java
+                        </span>
+
+                    </div>
+
+
+                    <p class="project-description">
+                        프로젝트 설명이 표시되는 영역입니다.
+                        이후 GitHub Repository의 description 데이터를
+                        표시할 예정입니다.
+                    </p>
+
+
+                    <div class="project-meta">
+
+                        <span>
+                            ⭐ 3
+                        </span>
+
+                        <a
+                            href="https://github.com/minsukim9"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            View Repository
+                        </a>
+
+                    </div>
+
+                </article>
+
+
+                <article class="project-card">
+
+                    <div class="project-card-header">
+
+                        <h3>
+                            Project 2
+                        </h3>
+
+                        <span class="project-language">
+                            JavaScript
+                        </span>
+
+                    </div>
+
+
+                    <p class="project-description">
+                        GitHub API 연동 전 카드 레이아웃을
+                        확인하기 위한 임시 프로젝트입니다.
+                    </p>
+
+
+                    <div class="project-meta">
+
+                        <span>
+                            ⭐ 2
+                        </span>
+
+                        <a
+                            href="https://github.com/minsukim9"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            View Repository
+                        </a>
+
+                    </div>
+
+                </article>
+
+
+                <article class="project-card">
+
+                    <div class="project-card-header">
+
+                        <h3>
+                            Project 3
+                        </h3>
+
+                        <span class="project-language">
+                            Python
+                        </span>
+
+                    </div>
+
+
+                    <p class="project-description">
+                        화면 크기에 따라 프로젝트 카드의
+                        열 개수가 자동으로 변경됩니다.
+                    </p>
+
+
+                    <div class="project-meta">
+
+                        <span>
+                            ⭐ 1
+                        </span>
+
+                        <a
+                            href="https://github.com/minsukim9"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            View Repository
+                        </a>
+
+                    </div>
+
+                </article>
+
 
             </div>
 
