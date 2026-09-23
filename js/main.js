@@ -11,24 +11,20 @@ const systemTheme =
     window.matchMedia('(prefers-color-scheme: dark)');
 
 
-/*
-    실제 화면에 테마를 적용하는 함수
-*/
 const applyTheme = (theme) => {
 
-    document.documentElement.dataset.theme = theme;
+    document.documentElement.dataset.theme =
+        theme;
 
 
     const isDark =
         theme === 'dark';
 
 
-    /*
-        현재 테마에 맞춰
-        버튼 아이콘과 접근성 텍스트 변경
-    */
     themeToggle.textContent =
-        isDark ? '☀️' : '🌙';
+        isDark
+            ? '☀️'
+            : '🌙';
 
 
     themeToggle.setAttribute(
@@ -41,19 +37,12 @@ const applyTheme = (theme) => {
 };
 
 
-/*
-    초기 테마 결정
-
-    우선순위
-
-    1. localStorage
-    2. 시스템 설정
-    3. light
-*/
 const getInitialTheme = () => {
 
     const savedTheme =
-        localStorage.getItem(THEME_STORAGE_KEY);
+        localStorage.getItem(
+            THEME_STORAGE_KEY
+        );
 
 
     if (
@@ -78,77 +67,64 @@ const getInitialTheme = () => {
 };
 
 
-/*
-    페이지 최초 로드 시
-    저장된 테마 적용
-*/
 applyTheme(
     getInitialTheme()
 );
 
 
-/*
-    테마 버튼 클릭
-*/
-themeToggle.addEventListener('click', () => {
+themeToggle.addEventListener(
+    'click',
+    () => {
 
-    const currentTheme =
-        document.documentElement.dataset.theme;
-
-
-    const nextTheme =
-        currentTheme === 'dark'
-            ? 'light'
-            : 'dark';
+        const currentTheme =
+            document.documentElement.dataset.theme;
 
 
-    /*
-        상태 저장
-    */
-    localStorage.setItem(
-        THEME_STORAGE_KEY,
-        nextTheme
-    );
+        const nextTheme =
+            currentTheme === 'dark'
+                ? 'light'
+                : 'dark';
 
 
-    /*
-        화면 변경
-    */
-    applyTheme(nextTheme);
-
-});
+        localStorage.setItem(
+            THEME_STORAGE_KEY,
+            nextTheme
+        );
 
 
-/*
-    사용자가 직접 테마를 선택한 적이 없다면
-    시스템 테마 변경을 자동으로 반영한다.
-*/
-systemTheme.addEventListener('change', (event) => {
-
-    const savedTheme =
-        localStorage.getItem(THEME_STORAGE_KEY);
-
-
-    /*
-        사용자가 직접 선택한 테마가 있다면
-        시스템 설정으로 덮어쓰지 않는다.
-    */
-    if (savedTheme) {
-
-        return;
+        applyTheme(nextTheme);
 
     }
+);
 
 
-    const nextTheme =
-        event.matches
-            ? 'dark'
-            : 'light';
+systemTheme.addEventListener(
+    'change',
+    (event) => {
+
+        const savedTheme =
+            localStorage.getItem(
+                THEME_STORAGE_KEY
+            );
 
 
-    applyTheme(nextTheme);
+        if (savedTheme) {
 
-});
+            return;
+
+        }
+
+
+        const nextTheme =
+            event.matches
+                ? 'dark'
+                : 'light';
+
+
+        applyTheme(nextTheme);
+
+    }
+);
 
 
 /* =========================
@@ -162,32 +138,41 @@ const navMenu =
     document.querySelector('.nav-menu');
 
 const navLinks =
-    document.querySelectorAll('.nav-menu a');
-
-
-menuToggle.addEventListener('click', () => {
-
-    navMenu.classList.toggle('active');
-
-
-    const isOpen =
-        navMenu.classList.contains('active');
-
-
-    menuToggle.setAttribute(
-        'aria-expanded',
-        String(isOpen)
+    document.querySelectorAll(
+        '.nav-menu a'
     );
 
 
-    menuToggle.setAttribute(
-        'aria-label',
-        isOpen
-            ? '메뉴 닫기'
-            : '메뉴 열기'
-    );
+menuToggle.addEventListener(
+    'click',
+    () => {
 
-});
+        navMenu.classList.toggle(
+            'active'
+        );
+
+
+        const isOpen =
+            navMenu.classList.contains(
+                'active'
+            );
+
+
+        menuToggle.setAttribute(
+            'aria-expanded',
+            String(isOpen)
+        );
+
+
+        menuToggle.setAttribute(
+            'aria-label',
+            isOpen
+                ? '메뉴 닫기'
+                : '메뉴 열기'
+        );
+
+    }
+);
 
 
 /* =========================
@@ -196,71 +181,225 @@ menuToggle.addEventListener('click', () => {
 
 navLinks.forEach((link) => {
 
-    link.addEventListener('click', (event) => {
+    link.addEventListener(
+        'click',
+        (event) => {
 
-        event.preventDefault();
-
-
-        const targetId =
-            link.getAttribute('href');
+            event.preventDefault();
 
 
-        const targetSection =
-            document.querySelector(targetId);
+            const targetId =
+                link.getAttribute(
+                    'href'
+                );
 
 
-        if (!targetSection) {
+            const targetSection =
+                document.querySelector(
+                    targetId
+                );
 
-            return;
+
+            if (!targetSection) {
+
+                return;
+
+            }
+
+
+            targetSection.scrollIntoView({
+                behavior: 'smooth'
+            });
+
+
+            navMenu.classList.remove(
+                'active'
+            );
+
+
+            menuToggle.setAttribute(
+                'aria-expanded',
+                'false'
+            );
+
+
+            menuToggle.setAttribute(
+                'aria-label',
+                '메뉴 열기'
+            );
 
         }
-
-
-        targetSection.scrollIntoView({
-            behavior: 'smooth'
-        });
-
-
-        navMenu.classList.remove('active');
-
-
-        menuToggle.setAttribute(
-            'aria-expanded',
-            'false'
-        );
-
-
-        menuToggle.setAttribute(
-            'aria-label',
-            '메뉴 열기'
-        );
-
-    });
+    );
 
 });
 
 
 /* =========================
-   Header Scroll
+   Header & Scroll Top
 ========================= */
 
 const header =
     document.querySelector('.header');
 
+const scrollTopButton =
+    document.querySelector('.scroll-top');
 
-window.addEventListener('scroll', () => {
 
-    if (window.scrollY >= 60) {
+const updateScrollState = () => {
 
-        header.classList.add('scrolled');
+    /*
+        60px 이상 스크롤하면
+        Header 스타일 변경
+    */
+    header.classList.toggle(
+        'scrolled',
+        window.scrollY >= 60
+    );
 
-    } else {
 
-        header.classList.remove('scrolled');
+    /*
+        300px 이상 스크롤하면
+        Scroll Top 버튼 표시
+    */
+    scrollTopButton.classList.toggle(
+        'visible',
+        window.scrollY >= 300
+    );
+
+};
+
+
+window.addEventListener(
+    'scroll',
+    updateScrollState
+);
+
+
+/*
+    새로고침 당시 이미 스크롤된 상태일 수도 있으므로
+    최초 한 번 실행한다.
+*/
+updateScrollState();
+
+
+scrollTopButton.addEventListener(
+    'click',
+    () => {
+
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
 
     }
+);
 
-});
+
+/* =========================
+   Scroll Reveal
+========================= */
+
+const revealElements =
+    document.querySelectorAll(
+        'main section'
+    );
+
+const prefersReducedMotion =
+    window.matchMedia(
+        '(prefers-reduced-motion: reduce)'
+    ).matches;
+
+
+/*
+    모션 감소 설정을 사용하거나
+    IntersectionObserver를 지원하지 않는 경우
+    콘텐츠를 바로 표시한다.
+*/
+if (
+    prefersReducedMotion ||
+    !('IntersectionObserver' in window)
+) {
+
+    revealElements.forEach(
+        (element) => {
+
+            element.classList.add(
+                'revealed'
+            );
+
+        }
+    );
+
+} else {
+
+    /*
+        JavaScript가 실행됐을 때만
+        reveal 클래스를 추가한다.
+
+        JS가 동작하지 않는 환경에서도
+        기본 콘텐츠가 숨겨지지 않게 하기 위함이다.
+    */
+    revealElements.forEach(
+        (element) => {
+
+            element.classList.add(
+                'reveal'
+            );
+
+        }
+    );
+
+
+    const revealObserver =
+        new IntersectionObserver(
+            (entries, observer) => {
+
+                entries.forEach(
+                    (entry) => {
+
+                        if (
+                            !entry.isIntersecting
+                        ) {
+
+                            return;
+
+                        }
+
+
+                        entry.target.classList.add(
+                            'revealed'
+                        );
+
+
+                        /*
+                            한 번 나타난 요소는
+                            다시 감시할 필요가 없으므로 해제한다.
+                        */
+                        observer.unobserve(
+                            entry.target
+                        );
+
+                    }
+                );
+
+            },
+            {
+                threshold: 0.2
+            }
+        );
+
+
+    revealElements.forEach(
+        (element) => {
+
+            revealObserver.observe(
+                element
+            );
+
+        }
+    );
+
+}
 
 
 /* =========================
@@ -275,21 +414,16 @@ const GITHUB_API_URL =
 
 
 const projectStatus =
-    document.querySelector('.project-status');
+    document.querySelector(
+        '.project-status'
+    );
 
 const projectList =
-    document.querySelector('.project-list');
+    document.querySelector(
+        '.project-list'
+    );
 
 
-/*
-    Projects 상태
-
-    idle
-    loading
-    success
-    error
-    empty
-*/
 let projectState = {
     status: 'idle',
     projects: [],
@@ -301,7 +435,9 @@ let projectState = {
    Project State
 ========================= */
 
-const updateProjectState = (nextState) => {
+const updateProjectState = (
+    nextState
+) => {
 
     projectState = {
         ...projectState,
@@ -342,7 +478,9 @@ const escapeHtml = (value) => {
    Project Card Render
 ========================= */
 
-const createProjectCards = (projects) => {
+const createProjectCards = (
+    projects
+) => {
 
     return projects
         .map((project) => {
@@ -375,7 +513,9 @@ const createProjectCards = (projects) => {
 
 
             const safeUrl =
-                escapeHtml(html_url);
+                escapeHtml(
+                    html_url
+                );
 
 
             return `
@@ -437,17 +577,12 @@ const renderProjects = () => {
     } = projectState;
 
 
-    /*
-        이전 렌더링 결과 초기화
-    */
     projectList.innerHTML = '';
 
     projectStatus.hidden = false;
 
 
-    /*
-        Loading
-    */
+    /* Loading */
     if (status === 'loading') {
 
         projectStatus.innerHTML = `
@@ -461,19 +596,20 @@ const renderProjects = () => {
             </p>
         `;
 
+
         return;
 
     }
 
 
-    /*
-        Error
-    */
+    /* Error */
     if (status === 'error') {
 
         projectStatus.innerHTML = `
             <p>
-                ${escapeHtml(errorMessage)}
+                ${escapeHtml(
+                    errorMessage
+                )}
             </p>
 
             <button
@@ -502,22 +638,19 @@ const renderProjects = () => {
     }
 
 
-    /*
-        Empty
-    */
+    /* Empty */
     if (status === 'empty') {
 
         projectStatus.textContent =
             '표시할 프로젝트가 없습니다.';
+
 
         return;
 
     }
 
 
-    /*
-        Success
-    */
+    /* Success */
     if (status === 'success') {
 
         projectStatus.hidden = true;
@@ -526,7 +659,9 @@ const renderProjects = () => {
 
 
         projectList.innerHTML =
-            createProjectCards(projects);
+            createProjectCards(
+                projects
+            );
 
 
         return;
@@ -534,9 +669,7 @@ const renderProjects = () => {
     }
 
 
-    /*
-        Idle
-    */
+    /* Idle */
     projectStatus.hidden = true;
 
 };
@@ -558,17 +691,16 @@ async function fetchProjects() {
     try {
 
         const response =
-            await fetch(GITHUB_API_URL);
+            await fetch(
+                GITHUB_API_URL
+            );
 
 
-        /*
-            fetch는 404, 500 등의 응답만으로
-            catch가 실행되지 않으므로
-            response.ok를 직접 확인한다.
-        */
         if (!response.ok) {
 
-            if (response.status === 403) {
+            if (
+                response.status === 403
+            ) {
 
                 throw new Error(
                     'GitHub API 요청 한도를 초과했습니다. 잠시 후 다시 시도해주세요.'
@@ -588,10 +720,9 @@ async function fetchProjects() {
             await response.json();
 
 
-        /*
-            Repository가 존재하지 않는 경우
-        */
-        if (projects.length === 0) {
+        if (
+            projects.length === 0
+        ) {
 
             updateProjectState({
                 status: 'empty',
@@ -605,9 +736,6 @@ async function fetchProjects() {
         }
 
 
-        /*
-            정상 응답
-        */
         updateProjectState({
             status: 'success',
             projects,
