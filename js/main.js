@@ -247,20 +247,12 @@ const scrollTopButton =
 
 const updateScrollState = () => {
 
-    /*
-        60px 이상 스크롤하면
-        Header 스타일 변경
-    */
     header.classList.toggle(
         'scrolled',
         window.scrollY >= 60
     );
 
 
-    /*
-        300px 이상 스크롤하면
-        Scroll Top 버튼 표시
-    */
     scrollTopButton.classList.toggle(
         'visible',
         window.scrollY >= 300
@@ -275,10 +267,6 @@ window.addEventListener(
 );
 
 
-/*
-    새로고침 당시 이미 스크롤된 상태일 수도 있으므로
-    최초 한 번 실행한다.
-*/
 updateScrollState();
 
 
@@ -310,11 +298,6 @@ const prefersReducedMotion =
     ).matches;
 
 
-/*
-    모션 감소 설정을 사용하거나
-    IntersectionObserver를 지원하지 않는 경우
-    콘텐츠를 바로 표시한다.
-*/
 if (
     prefersReducedMotion ||
     !('IntersectionObserver' in window)
@@ -332,13 +315,6 @@ if (
 
 } else {
 
-    /*
-        JavaScript가 실행됐을 때만
-        reveal 클래스를 추가한다.
-
-        JS가 동작하지 않는 환경에서도
-        기본 콘텐츠가 숨겨지지 않게 하기 위함이다.
-    */
     revealElements.forEach(
         (element) => {
 
@@ -371,10 +347,6 @@ if (
                         );
 
 
-                        /*
-                            한 번 나타난 요소는
-                            다시 감시할 필요가 없으므로 해제한다.
-                        */
                         observer.unobserve(
                             entry.target
                         );
@@ -582,7 +554,6 @@ const renderProjects = () => {
     projectStatus.hidden = false;
 
 
-    /* Loading */
     if (status === 'loading') {
 
         projectStatus.innerHTML = `
@@ -602,7 +573,6 @@ const renderProjects = () => {
     }
 
 
-    /* Error */
     if (status === 'error') {
 
         projectStatus.innerHTML = `
@@ -638,7 +608,6 @@ const renderProjects = () => {
     }
 
 
-    /* Empty */
     if (status === 'empty') {
 
         projectStatus.textContent =
@@ -650,7 +619,6 @@ const renderProjects = () => {
     }
 
 
-    /* Success */
     if (status === 'success') {
 
         projectStatus.hidden = true;
@@ -669,7 +637,6 @@ const renderProjects = () => {
     }
 
 
-    /* Idle */
     projectStatus.hidden = true;
 
 };
@@ -762,6 +729,354 @@ async function fetchProjects() {
     }
 
 }
+
+
+/* =========================
+   Contact Form
+========================= */
+
+const contactForm =
+    document.querySelector(
+        '.contact-form'
+    );
+
+
+const formFields = {
+    name: document.querySelector('#name'),
+    email: document.querySelector('#email'),
+    message: document.querySelector('#message')
+};
+
+
+const formErrorElements = {
+    name: document.querySelector(
+        '#name-error'
+    ),
+    email: document.querySelector(
+        '#email-error'
+    ),
+    message: document.querySelector(
+        '#message-error'
+    )
+};
+
+
+const formSuccess =
+    document.querySelector(
+        '.form-success'
+    );
+
+
+const EMAIL_PATTERN =
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+
+let formState = {
+
+    values: {
+        name: '',
+        email: '',
+        message: ''
+    },
+
+    errors: {
+        name: '',
+        email: '',
+        message: ''
+    },
+
+    successMessage: ''
+
+};
+
+
+/* =========================
+   Contact Validation
+========================= */
+
+const validateContactField = (
+    fieldName,
+    value
+) => {
+
+    const trimmedValue =
+        value.trim();
+
+
+    if (fieldName === 'name') {
+
+        if (!trimmedValue) {
+
+            return '이름을 입력해주세요.';
+
+        }
+
+    }
+
+
+    if (fieldName === 'email') {
+
+        if (!trimmedValue) {
+
+            return '이메일을 입력해주세요.';
+
+        }
+
+
+        if (
+            !EMAIL_PATTERN.test(
+                trimmedValue
+            )
+        ) {
+
+            return '올바른 이메일 형식을 입력해주세요.';
+
+        }
+
+    }
+
+
+    if (fieldName === 'message') {
+
+        if (!trimmedValue) {
+
+            return '메시지를 입력해주세요.';
+
+        }
+
+    }
+
+
+    return '';
+
+};
+
+
+/* =========================
+   Contact Render
+========================= */
+
+const renderContactField = (
+    fieldName
+) => {
+
+    const field =
+        formFields[fieldName];
+
+    const errorElement =
+        formErrorElements[fieldName];
+
+    const errorMessage =
+        formState.errors[fieldName];
+
+
+    errorElement.textContent =
+        errorMessage;
+
+
+    field.setAttribute(
+        'aria-invalid',
+        String(Boolean(errorMessage))
+    );
+
+};
+
+
+const renderContactForm = () => {
+
+    Object.keys(
+        formFields
+    ).forEach(
+        renderContactField
+    );
+
+
+    formSuccess.textContent =
+        formState.successMessage;
+
+};
+
+
+/* =========================
+   Contact State
+========================= */
+
+const updateContactField = (
+    fieldName,
+    value
+) => {
+
+    formState = {
+
+        ...formState,
+
+        values: {
+            ...formState.values,
+            [fieldName]: value
+        },
+
+        errors: {
+            ...formState.errors,
+            [fieldName]:
+                validateContactField(
+                    fieldName,
+                    value
+                )
+        },
+
+        successMessage: ''
+
+    };
+
+
+    renderContactForm();
+
+};
+
+
+/* =========================
+   Contact Input Event
+========================= */
+
+Object.entries(
+    formFields
+).forEach(
+    ([fieldName, field]) => {
+
+        field.addEventListener(
+            'input',
+            (event) => {
+
+                updateContactField(
+                    fieldName,
+                    event.target.value
+                );
+
+            }
+        );
+
+    }
+);
+
+
+/* =========================
+   Contact Submit Event
+========================= */
+
+contactForm.addEventListener(
+    'submit',
+    (event) => {
+
+        /*
+            브라우저의 기본 form 제출 동작을 방지
+        */
+        event.preventDefault();
+
+
+        const errors =
+            Object.fromEntries(
+
+                Object.entries(
+                    formState.values
+                ).map(
+                    ([fieldName, value]) => [
+
+                        fieldName,
+
+                        validateContactField(
+                            fieldName,
+                            value
+                        )
+
+                    ]
+                )
+
+            );
+
+
+        const hasError =
+            Object.values(
+                errors
+            ).some(
+                (errorMessage) =>
+                    Boolean(errorMessage)
+            );
+
+
+        formState = {
+            ...formState,
+            errors,
+            successMessage: ''
+        };
+
+
+        renderContactForm();
+
+
+        /*
+            에러가 있으면
+            첫 번째 잘못된 필드에 focus
+        */
+        if (hasError) {
+
+            const firstInvalidFieldName =
+                Object.keys(
+                    errors
+                ).find(
+                    (fieldName) =>
+                        Boolean(
+                            errors[fieldName]
+                        )
+                );
+
+
+            formFields[
+                firstInvalidFieldName
+            ].focus();
+
+
+            return;
+
+        }
+
+
+        /*
+            실제 서버 전송은 하지 않고
+            현재 미션에서는 성공 상태만 표시한다.
+        */
+        contactForm.reset();
+
+
+        formState = {
+
+            values: {
+                name: '',
+                email: '',
+                message: ''
+            },
+
+            errors: {
+                name: '',
+                email: '',
+                message: ''
+            },
+
+            successMessage:
+                '입력 내용이 정상적으로 확인되었습니다.'
+
+        };
+
+
+        renderContactForm();
+
+    }
+);
+
+
+/*
+    초기 접근성 상태 렌더링
+*/
+renderContactForm();
 
 
 /* =========================
