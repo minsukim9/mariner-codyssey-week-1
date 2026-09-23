@@ -8,7 +8,9 @@ const themeToggle =
     document.querySelector('.theme-toggle');
 
 const systemTheme =
-    window.matchMedia('(prefers-color-scheme: dark)');
+    window.matchMedia(
+        '(prefers-color-scheme: dark)'
+    );
 
 
 const applyTheme = (theme) => {
@@ -132,10 +134,14 @@ systemTheme.addEventListener(
 ========================= */
 
 const menuToggle =
-    document.querySelector('.menu-toggle');
+    document.querySelector(
+        '.menu-toggle'
+    );
 
 const navMenu =
-    document.querySelector('.nav-menu');
+    document.querySelector(
+        '.nav-menu'
+    );
 
 const navLinks =
     document.querySelectorAll(
@@ -179,59 +185,61 @@ menuToggle.addEventListener(
    Smooth Scroll
 ========================= */
 
-navLinks.forEach((link) => {
+navLinks.forEach(
+    (link) => {
 
-    link.addEventListener(
-        'click',
-        (event) => {
+        link.addEventListener(
+            'click',
+            (event) => {
 
-            event.preventDefault();
+                event.preventDefault();
 
 
-            const targetId =
-                link.getAttribute(
-                    'href'
+                const targetId =
+                    link.getAttribute(
+                        'href'
+                    );
+
+
+                const targetSection =
+                    document.querySelector(
+                        targetId
+                    );
+
+
+                if (!targetSection) {
+
+                    return;
+
+                }
+
+
+                targetSection.scrollIntoView({
+                    behavior: 'smooth'
+                });
+
+
+                navMenu.classList.remove(
+                    'active'
                 );
 
 
-            const targetSection =
-                document.querySelector(
-                    targetId
+                menuToggle.setAttribute(
+                    'aria-expanded',
+                    'false'
                 );
 
 
-            if (!targetSection) {
-
-                return;
+                menuToggle.setAttribute(
+                    'aria-label',
+                    '메뉴 열기'
+                );
 
             }
+        );
 
-
-            targetSection.scrollIntoView({
-                behavior: 'smooth'
-            });
-
-
-            navMenu.classList.remove(
-                'active'
-            );
-
-
-            menuToggle.setAttribute(
-                'aria-expanded',
-                'false'
-            );
-
-
-            menuToggle.setAttribute(
-                'aria-label',
-                '메뉴 열기'
-            );
-
-        }
-    );
-
-});
+    }
+);
 
 
 /* =========================
@@ -239,10 +247,14 @@ navLinks.forEach((link) => {
 ========================= */
 
 const header =
-    document.querySelector('.header');
+    document.querySelector(
+        '.header'
+    );
 
 const scrollTopButton =
-    document.querySelector('.scroll-top');
+    document.querySelector(
+        '.scroll-top'
+    );
 
 
 const updateScrollState = () => {
@@ -375,14 +387,11 @@ if (
 
 
 /* =========================
-   GitHub Projects
+   Project Data
 ========================= */
 
-const GITHUB_USERNAME =
-    'minsukim9';
-
-const GITHUB_API_URL =
-    `https://api.github.com/users/${GITHUB_USERNAME}/repos`;
+const PROJECT_DATA_URL =
+    './data/repos.json';
 
 
 const projectStatus =
@@ -397,9 +406,13 @@ const projectList =
 
 
 let projectState = {
+
     status: 'idle',
+
     projects: [],
+
     errorMessage: ''
+
 };
 
 
@@ -412,8 +425,11 @@ const updateProjectState = (
 ) => {
 
     projectState = {
+
         ...projectState,
+
         ...nextState
+
     };
 
 
@@ -429,11 +445,17 @@ const updateProjectState = (
 const escapeHtml = (value) => {
 
     const htmlEntities = {
+
         '&': '&amp;',
+
         '<': '&lt;',
+
         '>': '&gt;',
+
         '"': '&quot;',
+
         "'": '&#039;'
+
     };
 
 
@@ -455,82 +477,86 @@ const createProjectCards = (
 ) => {
 
     return projects
-        .map((project) => {
+        .map(
+            (project) => {
 
-            const {
-                name,
-                description,
-                language,
-                stargazers_count,
-                html_url
-            } = project;
-
-
-            const safeName =
-                escapeHtml(name);
-
-
-            const safeDescription =
-                escapeHtml(
-                    description ||
-                    '등록된 프로젝트 설명이 없습니다.'
-                );
-
-
-            const safeLanguage =
-                escapeHtml(
-                    language ||
-                    'Other'
-                );
-
-
-            const safeUrl =
-                escapeHtml(
+                const {
+                    name,
+                    description,
+                    language,
+                    stargazers_count,
                     html_url
-                );
+                } = project;
 
 
-            return `
-                <article class="project-card">
-
-                    <div class="project-card-header">
-
-                        <h3>
-                            ${safeName}
-                        </h3>
-
-                        <span class="project-language">
-                            ${safeLanguage}
-                        </span>
-
-                    </div>
+                const safeName =
+                    escapeHtml(
+                        name
+                    );
 
 
-                    <p class="project-description">
-                        ${safeDescription}
-                    </p>
+                const safeDescription =
+                    escapeHtml(
+                        description ||
+                        '등록된 프로젝트 설명이 없습니다.'
+                    );
 
 
-                    <div class="project-meta">
+                const safeLanguage =
+                    escapeHtml(
+                        language ||
+                        'Other'
+                    );
 
-                        <span>
-                            ⭐ ${stargazers_count}
-                        </span>
 
-                        <a
-                            href="${safeUrl}"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            View Repository
-                        </a>
+                const safeUrl =
+                    escapeHtml(
+                        html_url
+                    );
 
-                    </div>
 
-                </article>
-            `;
+                return `
+                    <article class="project-card">
 
-        })
+                        <div class="project-card-header">
+
+                            <h3>
+                                ${safeName}
+                            </h3>
+
+                            <span class="project-language">
+                                ${safeLanguage}
+                            </span>
+
+                        </div>
+
+
+                        <p class="project-description">
+                            ${safeDescription}
+                        </p>
+
+
+                        <div class="project-meta">
+
+                            <span>
+                                ⭐ ${stargazers_count}
+                            </span>
+
+                            <a
+                                href="${safeUrl}"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                View Repository
+                            </a>
+
+                        </div>
+
+                    </article>
+                `;
+
+            }
+        )
         .join('');
 
 };
@@ -554,7 +580,11 @@ const renderProjects = () => {
     projectStatus.hidden = false;
 
 
-    if (status === 'loading') {
+    /* Loading */
+
+    if (
+        status === 'loading'
+    ) {
 
         projectStatus.innerHTML = `
             <div
@@ -573,7 +603,11 @@ const renderProjects = () => {
     }
 
 
-    if (status === 'error') {
+    /* Error */
+
+    if (
+        status === 'error'
+    ) {
 
         projectStatus.innerHTML = `
             <p>
@@ -608,7 +642,11 @@ const renderProjects = () => {
     }
 
 
-    if (status === 'empty') {
+    /* Empty */
+
+    if (
+        status === 'empty'
+    ) {
 
         projectStatus.textContent =
             '표시할 프로젝트가 없습니다.';
@@ -619,7 +657,11 @@ const renderProjects = () => {
     }
 
 
-    if (status === 'success') {
+    /* Success */
+
+    if (
+        status === 'success'
+    ) {
 
         projectStatus.hidden = true;
 
@@ -643,15 +685,19 @@ const renderProjects = () => {
 
 
 /* =========================
-   GitHub API
+   Repository Data Fetch
 ========================= */
 
 async function fetchProjects() {
 
     updateProjectState({
+
         status: 'loading',
+
         projects: [],
+
         errorMessage: ''
+
     });
 
 
@@ -659,25 +705,19 @@ async function fetchProjects() {
 
         const response =
             await fetch(
-                GITHUB_API_URL
+                PROJECT_DATA_URL,
+                {
+                    cache: 'no-store'
+                }
             );
 
 
-        if (!response.ok) {
-
-            if (
-                response.status === 403
-            ) {
-
-                throw new Error(
-                    'GitHub API 요청 한도를 초과했습니다. 잠시 후 다시 시도해주세요.'
-                );
-
-            }
-
+        if (
+            !response.ok
+        ) {
 
             throw new Error(
-                '프로젝트를 불러올 수 없습니다.'
+                '프로젝트 데이터를 불러올 수 없습니다.'
             );
 
         }
@@ -688,13 +728,30 @@ async function fetchProjects() {
 
 
         if (
+            !Array.isArray(
+                projects
+            )
+        ) {
+
+            throw new Error(
+                '프로젝트 데이터 형식이 올바르지 않습니다.'
+            );
+
+        }
+
+
+        if (
             projects.length === 0
         ) {
 
             updateProjectState({
+
                 status: 'empty',
+
                 projects: [],
+
                 errorMessage: ''
+
             });
 
 
@@ -704,26 +761,34 @@ async function fetchProjects() {
 
 
         updateProjectState({
+
             status: 'success',
+
             projects,
+
             errorMessage: ''
+
         });
 
 
     } catch (error) {
 
         console.error(
-            'GitHub API Error:',
+            'Project Data Error:',
             error
         );
 
 
         updateProjectState({
+
             status: 'error',
+
             projects: [],
+
             errorMessage:
                 error.message ||
-                '프로젝트를 불러올 수 없습니다.'
+                '프로젝트 데이터를 불러올 수 없습니다.'
+
         });
 
     }
@@ -742,22 +807,42 @@ const contactForm =
 
 
 const formFields = {
-    name: document.querySelector('#name'),
-    email: document.querySelector('#email'),
-    message: document.querySelector('#message')
+
+    name:
+        document.querySelector(
+            '#name'
+        ),
+
+    email:
+        document.querySelector(
+            '#email'
+        ),
+
+    message:
+        document.querySelector(
+            '#message'
+        )
+
 };
 
 
 const formErrorElements = {
-    name: document.querySelector(
-        '#name-error'
-    ),
-    email: document.querySelector(
-        '#email-error'
-    ),
-    message: document.querySelector(
-        '#message-error'
-    )
+
+    name:
+        document.querySelector(
+            '#name-error'
+        ),
+
+    email:
+        document.querySelector(
+            '#email-error'
+        ),
+
+    message:
+        document.querySelector(
+            '#message-error'
+        )
+
 };
 
 
@@ -774,15 +859,23 @@ const EMAIL_PATTERN =
 let formState = {
 
     values: {
+
         name: '',
+
         email: '',
+
         message: ''
+
     },
 
     errors: {
+
         name: '',
+
         email: '',
+
         message: ''
+
     },
 
     successMessage: ''
@@ -803,9 +896,13 @@ const validateContactField = (
         value.trim();
 
 
-    if (fieldName === 'name') {
+    if (
+        fieldName === 'name'
+    ) {
 
-        if (!trimmedValue) {
+        if (
+            !trimmedValue
+        ) {
 
             return '이름을 입력해주세요.';
 
@@ -814,9 +911,13 @@ const validateContactField = (
     }
 
 
-    if (fieldName === 'email') {
+    if (
+        fieldName === 'email'
+    ) {
 
-        if (!trimmedValue) {
+        if (
+            !trimmedValue
+        ) {
 
             return '이메일을 입력해주세요.';
 
@@ -836,9 +937,13 @@ const validateContactField = (
     }
 
 
-    if (fieldName === 'message') {
+    if (
+        fieldName === 'message'
+    ) {
 
-        if (!trimmedValue) {
+        if (
+            !trimmedValue
+        ) {
 
             return '메시지를 입력해주세요.';
 
@@ -861,13 +966,19 @@ const renderContactField = (
 ) => {
 
     const field =
-        formFields[fieldName];
+        formFields[
+            fieldName
+        ];
 
     const errorElement =
-        formErrorElements[fieldName];
+        formErrorElements[
+            fieldName
+        ];
 
     const errorMessage =
-        formState.errors[fieldName];
+        formState.errors[
+            fieldName
+        ];
 
 
     errorElement.textContent =
@@ -876,7 +987,11 @@ const renderContactField = (
 
     field.setAttribute(
         'aria-invalid',
-        String(Boolean(errorMessage))
+        String(
+            Boolean(
+                errorMessage
+            )
+        )
     );
 
 };
@@ -911,17 +1026,24 @@ const updateContactField = (
         ...formState,
 
         values: {
+
             ...formState.values,
-            [fieldName]: value
+
+            [fieldName]:
+                value
+
         },
 
         errors: {
+
             ...formState.errors,
+
             [fieldName]:
                 validateContactField(
                     fieldName,
                     value
                 )
+
         },
 
         successMessage: ''
@@ -941,7 +1063,12 @@ const updateContactField = (
 Object.entries(
     formFields
 ).forEach(
-    ([fieldName, field]) => {
+    (
+        [
+            fieldName,
+            field
+        ]
+    ) => {
 
         field.addEventListener(
             'input',
@@ -967,9 +1094,6 @@ contactForm.addEventListener(
     'submit',
     (event) => {
 
-        /*
-            브라우저의 기본 form 제출 동작을 방지
-        */
         event.preventDefault();
 
 
@@ -978,8 +1102,14 @@ contactForm.addEventListener(
 
                 Object.entries(
                     formState.values
-                ).map(
-                    ([fieldName, value]) => [
+                )
+                .map(
+                    (
+                        [
+                            fieldName,
+                            value
+                        ]
+                    ) => [
 
                         fieldName,
 
@@ -997,35 +1127,43 @@ contactForm.addEventListener(
         const hasError =
             Object.values(
                 errors
-            ).some(
+            )
+            .some(
                 (errorMessage) =>
-                    Boolean(errorMessage)
+                    Boolean(
+                        errorMessage
+                    )
             );
 
 
         formState = {
+
             ...formState,
+
             errors,
+
             successMessage: ''
+
         };
 
 
         renderContactForm();
 
 
-        /*
-            에러가 있으면
-            첫 번째 잘못된 필드에 focus
-        */
-        if (hasError) {
+        if (
+            hasError
+        ) {
 
             const firstInvalidFieldName =
                 Object.keys(
                     errors
-                ).find(
+                )
+                .find(
                     (fieldName) =>
                         Boolean(
-                            errors[fieldName]
+                            errors[
+                                fieldName
+                            ]
                         )
                 );
 
@@ -1040,25 +1178,29 @@ contactForm.addEventListener(
         }
 
 
-        /*
-            실제 서버 전송은 하지 않고
-            현재 미션에서는 성공 상태만 표시한다.
-        */
         contactForm.reset();
 
 
         formState = {
 
             values: {
+
                 name: '',
+
                 email: '',
+
                 message: ''
+
             },
 
             errors: {
+
                 name: '',
+
                 email: '',
+
                 message: ''
+
             },
 
             successMessage:
@@ -1073,9 +1215,6 @@ contactForm.addEventListener(
 );
 
 
-/*
-    초기 접근성 상태 렌더링
-*/
 renderContactForm();
 
 
