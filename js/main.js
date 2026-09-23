@@ -2,25 +2,151 @@
    Dark Mode
 ========================= */
 
+const THEME_STORAGE_KEY = 'theme';
+
 const themeToggle =
     document.querySelector('.theme-toggle');
 
+const systemTheme =
+    window.matchMedia('(prefers-color-scheme: dark)');
 
+
+/*
+    실제 화면에 테마를 적용하는 함수
+*/
+const applyTheme = (theme) => {
+
+    document.documentElement.dataset.theme = theme;
+
+
+    const isDark =
+        theme === 'dark';
+
+
+    /*
+        현재 테마에 맞춰
+        버튼 아이콘과 접근성 텍스트 변경
+    */
+    themeToggle.textContent =
+        isDark ? '☀️' : '🌙';
+
+
+    themeToggle.setAttribute(
+        'aria-label',
+        isDark
+            ? '라이트 모드로 전환'
+            : '다크 모드로 전환'
+    );
+
+};
+
+
+/*
+    초기 테마 결정
+
+    우선순위
+
+    1. localStorage
+    2. 시스템 설정
+    3. light
+*/
+const getInitialTheme = () => {
+
+    const savedTheme =
+        localStorage.getItem(THEME_STORAGE_KEY);
+
+
+    if (
+        savedTheme === 'dark' ||
+        savedTheme === 'light'
+    ) {
+
+        return savedTheme;
+
+    }
+
+
+    if (systemTheme.matches) {
+
+        return 'dark';
+
+    }
+
+
+    return 'light';
+
+};
+
+
+/*
+    페이지 최초 로드 시
+    저장된 테마 적용
+*/
+applyTheme(
+    getInitialTheme()
+);
+
+
+/*
+    테마 버튼 클릭
+*/
 themeToggle.addEventListener('click', () => {
 
     const currentTheme =
         document.documentElement.dataset.theme;
 
 
-    if (currentTheme === 'dark') {
+    const nextTheme =
+        currentTheme === 'dark'
+            ? 'light'
+            : 'dark';
 
-        document.documentElement.dataset.theme = 'light';
 
-    } else {
+    /*
+        상태 저장
+    */
+    localStorage.setItem(
+        THEME_STORAGE_KEY,
+        nextTheme
+    );
 
-        document.documentElement.dataset.theme = 'dark';
+
+    /*
+        화면 변경
+    */
+    applyTheme(nextTheme);
+
+});
+
+
+/*
+    사용자가 직접 테마를 선택한 적이 없다면
+    시스템 테마 변경을 자동으로 반영한다.
+*/
+systemTheme.addEventListener('change', (event) => {
+
+    const savedTheme =
+        localStorage.getItem(THEME_STORAGE_KEY);
+
+
+    /*
+        사용자가 직접 선택한 테마가 있다면
+        시스템 설정으로 덮어쓰지 않는다.
+    */
+    if (savedTheme) {
+
+        return;
 
     }
+
+
+    const nextTheme =
+        event.matches
+            ? 'dark'
+            : 'light';
+
+
+    applyTheme(nextTheme);
 
 });
 
@@ -56,7 +182,9 @@ menuToggle.addEventListener('click', () => {
 
     menuToggle.setAttribute(
         'aria-label',
-        isOpen ? '메뉴 닫기' : '메뉴 열기'
+        isOpen
+            ? '메뉴 닫기'
+            : '메뉴 열기'
     );
 
 });
@@ -82,7 +210,9 @@ navLinks.forEach((link) => {
 
 
         if (!targetSection) {
+
             return;
+
         }
 
 
@@ -137,7 +267,8 @@ window.addEventListener('scroll', () => {
    GitHub Projects
 ========================= */
 
-const GITHUB_USERNAME = 'minsukim9';
+const GITHUB_USERNAME =
+    'minsukim9';
 
 const GITHUB_API_URL =
     `https://api.github.com/users/${GITHUB_USERNAME}/repos`;
@@ -151,7 +282,7 @@ const projectList =
 
 
 /*
-    Projects 영역에서 관리할 상태
+    Projects 상태
 
     idle
     loading
@@ -187,10 +318,6 @@ const updateProjectState = (nextState) => {
    HTML Escape
 ========================= */
 
-/*
-    GitHub에서 받은 문자열을 innerHTML에
-    안전하게 출력하기 위한 함수
-*/
 const escapeHtml = (value) => {
 
     const htmlEntities = {
@@ -204,7 +331,8 @@ const escapeHtml = (value) => {
 
     return String(value).replace(
         /[&<>"']/g,
-        (character) => htmlEntities[character]
+        (character) =>
+            htmlEntities[character]
     );
 
 };
@@ -216,75 +344,82 @@ const escapeHtml = (value) => {
 
 const createProjectCards = (projects) => {
 
-    return projects.map((project) => {
+    return projects
+        .map((project) => {
 
-        const {
-            name,
-            description,
-            language,
-            stargazers_count,
-            html_url
-        } = project;
-
-
-        const safeName =
-            escapeHtml(name);
-
-        const safeDescription =
-            escapeHtml(
-                description || '등록된 프로젝트 설명이 없습니다.'
-            );
-
-        const safeLanguage =
-            escapeHtml(
-                language || 'Other'
-            );
-
-        const safeUrl =
-            escapeHtml(html_url);
+            const {
+                name,
+                description,
+                language,
+                stargazers_count,
+                html_url
+            } = project;
 
 
-        return `
-            <article class="project-card">
-
-                <div class="project-card-header">
-
-                    <h3>
-                        ${safeName}
-                    </h3>
-
-                    <span class="project-language">
-                        ${safeLanguage}
-                    </span>
-
-                </div>
+            const safeName =
+                escapeHtml(name);
 
 
-                <p class="project-description">
-                    ${safeDescription}
-                </p>
+            const safeDescription =
+                escapeHtml(
+                    description ||
+                    '등록된 프로젝트 설명이 없습니다.'
+                );
 
 
-                <div class="project-meta">
+            const safeLanguage =
+                escapeHtml(
+                    language ||
+                    'Other'
+                );
 
-                    <span>
-                        ⭐ ${stargazers_count}
-                    </span>
 
-                    <a
-                        href="${safeUrl}"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                    >
-                        View Repository
-                    </a>
+            const safeUrl =
+                escapeHtml(html_url);
 
-                </div>
 
-            </article>
-        `;
+            return `
+                <article class="project-card">
 
-    }).join('');
+                    <div class="project-card-header">
+
+                        <h3>
+                            ${safeName}
+                        </h3>
+
+                        <span class="project-language">
+                            ${safeLanguage}
+                        </span>
+
+                    </div>
+
+
+                    <p class="project-description">
+                        ${safeDescription}
+                    </p>
+
+
+                    <div class="project-meta">
+
+                        <span>
+                            ⭐ ${stargazers_count}
+                        </span>
+
+                        <a
+                            href="${safeUrl}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            View Repository
+                        </a>
+
+                    </div>
+
+                </article>
+            `;
+
+        })
+        .join('');
 
 };
 
@@ -303,7 +438,7 @@ const renderProjects = () => {
 
 
     /*
-        렌더링할 때 이전 화면을 정리한다.
+        이전 렌더링 결과 초기화
     */
     projectList.innerHTML = '';
 
@@ -327,6 +462,7 @@ const renderProjects = () => {
         `;
 
         return;
+
     }
 
 
@@ -350,7 +486,9 @@ const renderProjects = () => {
 
 
         const retryButton =
-            document.querySelector('.retry-projects');
+            document.querySelector(
+                '.retry-projects'
+            );
 
 
         retryButton.addEventListener(
@@ -360,6 +498,7 @@ const renderProjects = () => {
 
 
         return;
+
     }
 
 
@@ -372,6 +511,7 @@ const renderProjects = () => {
             '표시할 프로젝트가 없습니다.';
 
         return;
+
     }
 
 
@@ -388,7 +528,9 @@ const renderProjects = () => {
         projectList.innerHTML =
             createProjectCards(projects);
 
+
         return;
+
     }
 
 
@@ -420,8 +562,9 @@ async function fetchProjects() {
 
 
         /*
-            HTTP 응답이 2xx가 아닌 경우
-            직접 Error를 발생시킨다.
+            fetch는 404, 500 등의 응답만으로
+            catch가 실행되지 않으므로
+            response.ok를 직접 확인한다.
         */
         if (!response.ok) {
 
@@ -446,7 +589,7 @@ async function fetchProjects() {
 
 
         /*
-            Repository가 하나도 없는 경우
+            Repository가 존재하지 않는 경우
         */
         if (projects.length === 0) {
 
@@ -456,12 +599,14 @@ async function fetchProjects() {
                 errorMessage: ''
             });
 
+
             return;
+
         }
 
 
         /*
-            정상적으로 데이터를 가져온 경우
+            정상 응답
         */
         updateProjectState({
             status: 'success',
