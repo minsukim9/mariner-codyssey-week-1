@@ -72,7 +72,6 @@
             </ul>
 
 
-            <!-- 다크 모드 버튼 -->
             <button
                 class="theme-toggle"
                 type="button"
@@ -82,7 +81,6 @@
             </button>
 
 
-            <!-- 모바일 햄버거 버튼 -->
             <button
                 class="menu-toggle"
                 type="button"
@@ -274,10 +272,6 @@
             </p>
 
 
-            <!--
-                loading / error / empty 상태를
-                JavaScript에서 렌더링하는 영역
-            -->
             <div
                 class="project-status"
                 role="status"
@@ -287,10 +281,6 @@
             </div>
 
 
-            <!--
-                GitHub API 데이터를 기반으로
-                JavaScript에서 프로젝트 카드를 생성한다.
-            -->
             <div class="project-list">
             </div>
 
@@ -310,7 +300,10 @@
             </h2>
 
 
-            <form class="contact-form">
+            <form
+                class="contact-form"
+                novalidate
+            >
 
                 <!-- 이름 -->
                 <div class="form-group">
@@ -323,9 +316,16 @@
                         type="text"
                         id="name"
                         name="name"
+                        autocomplete="name"
+                        aria-describedby="name-error"
+                        required
                     >
 
-                    <p class="error-message"></p>
+                    <p
+                        class="error-message"
+                        id="name-error"
+                        aria-live="polite"
+                    ></p>
 
                 </div>
 
@@ -341,9 +341,16 @@
                         type="email"
                         id="email"
                         name="email"
+                        autocomplete="email"
+                        aria-describedby="email-error"
+                        required
                     >
 
-                    <p class="error-message"></p>
+                    <p
+                        class="error-message"
+                        id="email-error"
+                        aria-live="polite"
+                    ></p>
 
                 </div>
 
@@ -359,9 +366,15 @@
                         id="message"
                         name="message"
                         rows="5"
+                        aria-describedby="message-error"
+                        required
                     ></textarea>
 
-                    <p class="error-message"></p>
+                    <p
+                        class="error-message"
+                        id="message-error"
+                        aria-live="polite"
+                    ></p>
 
                 </div>
 
@@ -371,7 +384,11 @@
                 </button>
 
 
-                <p class="form-success"></p>
+                <p
+                    class="form-success"
+                    role="status"
+                    aria-live="polite"
+                ></p>
 
             </form>
 
